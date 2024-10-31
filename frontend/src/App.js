@@ -1,7 +1,7 @@
 import React from "react";
 // import DefaultComponent from "./components/DefaultComponent";
 import MessageBoard from "./components/MessageBoard";
-import Arco from "./components/Arco";
+// import Arco from "./components/Arco";
 
 const App = () => {
   return (
@@ -11,9 +11,9 @@ const App = () => {
       <div className="example-row">
         <MessageBoard />
       </div>
-      <div className="example-row">
+      {/* <div className="example-row">
         <Arco />
-      </div>
+      </div> */}
       {/* <div className="example-row">
         <DefaultComponent />
       </div> */}

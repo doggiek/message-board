@@ -10,7 +10,7 @@ import {
 import "@arco-design/web-react/dist/css/arco.css";
 import "./arco.css";
 
-const App = () => {
+const Arco = () => {
   const [like, setLike] = React.useState(true);
   const [star, setStar] = React.useState(true);
   const actions = [
@@ -37,7 +37,7 @@ const App = () => {
   return (
     <div style={{ width: "80%", padding: "20px" }}>
       <Comment
-        actions={actions}
+        // actions={actions}
         align="right"
         author="Balzac"
         avatar={
@@ -62,4 +62,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Arco;

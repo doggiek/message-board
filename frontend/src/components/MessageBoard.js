@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Button, Input } from "antd";
+import { Button, Input, Tooltip } from "antd";
 import { ethers } from "ethers";
 import dayjs from "dayjs";
 import MessageBoardArtifact from "../static/contracts/MessageBoard.json";
 import MessageBoardAddress from "../static/address/MessageBoardAddress.json";
+import { Comment, Avatar } from "@arco-design/web-react";
+import { CopyOutlined } from "@ant-design/icons";
+
+import "@arco-design/web-react/dist/css/arco.css";
+import "./arco.css";
 
 const { TextArea } = Input;
 
 // 合约地址和ABI
-const contractAddress = MessageBoardAddress.local;
+const contractAddress = MessageBoardAddress.sepolia;
 const contractABI = MessageBoardArtifact.abi;
 
 const MessageBoard = () => {
@@ -97,6 +102,37 @@ const MessageBoard = () => {
     }
   };
 
+  const CopyText = ({ text }) => {
+    const [isCopied, setIsCopied] = useState(false);
+
+    const handleCopy = () => {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          setIsCopied(true);
+          setTimeout(() => setIsCopied(false), 2000); // 2秒后重置状态
+        })
+        .catch((err) => console.error("复制失败:", err));
+    };
+
+    return (
+      <Tooltip title={isCopied ? "已复制" : "复制地址"} placement="top">
+        <CopyOutlined
+          onClick={handleCopy}
+          style={{
+            color: isCopied ? "#1890ff" : "#999", // 复制后颜色
+            cursor: "pointer",
+            transition: "color 0.3s",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "#1890ff")} // hover 颜色
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.color = isCopied ? "#1890ff" : "#999")
+          } // 还原颜色
+        />
+      </Tooltip>
+    );
+  };
+
   return (
     <div style={{ width: "80%", padding: "20px" }}>
       <h2>钱包</h2>
@@ -106,8 +142,10 @@ const MessageBoard = () => {
         </Button>
       ) : (
         <ul>
-          <li>当前账户地址: {currentAccount}</li>
-          <li>当前网络名称: {currentNetwork}</li>
+          <li key="account">
+            当前账户地址: {currentAccount} <CopyText text={currentAccount} />
+          </li>
+          <li key="network">当前网络名称: {currentNetwork}</li>
         </ul>
       )}
       <h2>留言</h2>
@@ -123,21 +161,34 @@ const MessageBoard = () => {
         </Button>
       </form>
 
-      <h2>列表</h2>
-      <ul>
+      <h2>列表（共 {messages.length} 条）</h2>
+      <div>
         {messages.length === 0 ? (
-          <li>暂无留言</li>
+          <p>暂无留言</p>
         ) : (
           messages.map((message, index) => (
-            <li key={index}>
-              {message.content}, 来自: {message.sender}, 时间:
-              {dayjs(Number(message.timestamp) * 1000).format(
+            <Comment
+              // actions={actions}
+              align="right"
+              author={message.sender}
+              avatar={
+                <Avatar>
+                  <img
+                    alt="avatar"
+                    src={`https://ui-avatars.com/api/name=${message.sender.slice(
+                      -2
+                    )}&background=random`}
+                  />
+                </Avatar>
+              }
+              content={<div> {message.content}</div>}
+              datetime={dayjs(Number(message.timestamp) * 1000).format(
                 "YYYY年MM月DD日 HH:mm:ss"
               )}
-            </li>
+            />
           ))
         )}
-      </ul>
+      </div>
     </div>
   );
 };
